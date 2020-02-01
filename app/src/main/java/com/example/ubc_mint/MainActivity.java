@@ -15,10 +15,6 @@ import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton button;
-    Button btnSpeak;
-    EditText editText;
-
-    android.speech.tts.TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
