@@ -6,10 +6,15 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 
 public class MainActivity extends AppCompatActivity {
     private ImageButton button;
+    Button btnSpeak;
+    EditText editText;
+
+    android.speech.tts.TextToSpeech textToSpeech;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,10 +28,15 @@ public class MainActivity extends AppCompatActivity {
                 openTextToSpeech();
             }
         });
+
+
+        // Initialize TextToSpeech
     }
 
     public void openTextToSpeech() {
         Intent intent = new Intent(this, TextToSpeech.class);
         startActivity(intent);
     }
+
+
 }
