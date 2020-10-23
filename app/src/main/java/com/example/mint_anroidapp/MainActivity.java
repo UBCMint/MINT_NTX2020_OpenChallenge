@@ -11,6 +11,7 @@ import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -29,17 +30,12 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         myDialog = new Dialog(this);
+    }
 
-//        go to Bluetooth page
-
-        buttonToAddPage = findViewById(R.id.add0);
-        buttonToAddPage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this, add_page.class);
-                MainActivity.this.startActivity(i);
-            }
-        });
+    public void goToBluetoothPage(View v) {
+        Intent myIntent = new Intent(MainActivity.this, add_page.class);
+//        myIntent.putExtra("key", value); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
     }
 
     public void OneShowPopup(View v) {
