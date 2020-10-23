@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+android:orientation="vertical"
+android:layout_width="300dp"
+android:layout_height="300dp"
+android:background="@drawable/bg_purple"
+android:padding="5dp"
+android:layout_gravity="center">
+
+    <TextView
+        android:id="@+id/text_close"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:textStyle="bold"
+        android:layout_gravity="end"
+        android:gravity="center"
+        android:background="@drawable/ic_clear_black_24dp"/>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/command_one_title"
+        android:layout_marginTop="35dp"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Type in title for this command"
+        android:background="#b19cd9"
+        android:textColor="#ffffff">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/command_one_voice"
+        android:layout_marginTop="10dp"
+        android:layout_width="250dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:hint="Type in voice command"
+        android:background="#b19cd9"
+        android:textColor="#ffffff">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textColor="#ffffff"/>
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="2"
+        android:orientation="horizontal">
+
+    <Button
+        android:id="@+id/one_play_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginLeft="45dp"
+        android:layout_marginRight="20dp"
+        android:text="Play" />
+
+    <Button
+        android:id="@+id/one_save_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:text="Save" />
+
+    </LinearLayout>
+
+</LinearLayout>
