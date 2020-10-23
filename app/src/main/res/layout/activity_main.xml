@@ -91,7 +91,7 @@
             android:textColor="#ffffff"
             android:text="Title 1"
             android:layout_marginRight="30dp"
-            app:backgroundTint="@color/design_default_color_secondary_variant"
+            app:backgroundTint="#2BC9AF"
             app:iconGravity="textStart" />
 
         <com.google.android.material.button.MaterialButton
@@ -103,7 +103,7 @@
             android:textColor="#ffffff"
             app:icon="@drawable/film"
             android:text="Title 1"
-            app:backgroundTint="@color/design_default_color_secondary_variant"
+            app:backgroundTint="#2BC9AF"
             app:iconGravity="textStart" />
 
     </LinearLayout>
@@ -129,7 +129,7 @@
             android:padding="5dp"
             android:text="Title 1"
             android:textColor="#ffffff"
-            app:backgroundTint="@color/design_default_color_secondary_variant"
+            app:backgroundTint="#2BC9AF"
             app:icon="@drawable/link"
             app:iconGravity="textStart" />
 
@@ -141,7 +141,7 @@
             android:padding="5dp"
             android:text="Title 1"
             android:textColor="#ffffff"
-            app:backgroundTint="@color/design_default_color_secondary_variant"
+            app:backgroundTint="#2BC9AF"
             app:icon="@drawable/house"
             app:iconGravity="textStart" />
 

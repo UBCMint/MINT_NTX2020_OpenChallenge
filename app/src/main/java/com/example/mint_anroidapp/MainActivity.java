@@ -14,22 +14,61 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
-    public ImageView buttonToAddPage;
-    public TextToSpeech mTTS;
-    private Button mButtonSpeak;
+    private TextToSpeech text_to_speech;
+    private TextInputLayout one_voice;
+    private TextInputLayout two_voice;
+    private TextInputLayout three_voice;
+    private TextInputLayout four_voice;
+
 
     Dialog myDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        one_voice = (TextInputLayout) findViewById(R.id.command_one_voice);
+        two_voice = (TextInputLayout) findViewById(R.id.command_two_voice);
+        three_voice = (TextInputLayout) findViewById(R.id.command_three_voice);
+        four_voice = (TextInputLayout) findViewById(R.id.command_four_voice);
 
         myDialog = new Dialog(this);
+
+        text_to_speech = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    text_to_speech.setLanguage(Locale.CANADA);
+                }
+            }
+        });
+    }
+
+    public void SpeakOne(View v) {
+        String to_speak = one_voice.getEditText().getText().toString();
+        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    public void SpeakTwo(View v) {
+        String to_speak = two_voice.getEditText().getText().toString();
+        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    public void SpeakThree(View v) {
+        String to_speak = three_voice.getEditText().getText().toString();
+        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+    }
+
+    public void SpeakFour(View v) {
+        String to_speak = four_voice.getEditText().getText().toString();
+        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
     }
 
     public void goToBluetoothPage(View v) {
@@ -39,9 +78,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OneShowPopup(View v) {
-
-    //    close
-
         TextView text_close;
         Button btnFollow = (Button) myDialog.findViewById(R.id.one_save_button);
         myDialog.setContentView(R.layout.command_one);
@@ -52,39 +88,9 @@ public class MainActivity extends AppCompatActivity {
                 myDialog.dismiss();
             }
         });
+        one_voice = (TextInputLayout) myDialog.findViewById(R.id.command_one_voice);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
-
-    //        speak
-
-//        mButtonSpeak = findViewById(R.id.command_one_voice);
-//        mTTS = new TextToSpeech(this, new TextToSpeech.OnInitListener() {
-//            @Override
-//            public void onInit(int status) {
-//                if (status == TextToSpeech.SUCCESS) {
-//                    int result = mTTS.setLanguage(Locale.CANADA);
-//                    if (result == TextToSpeech.LANG_MISSING_DATA
-//                            || result == TextToSpeech.LANG_NOT_SUPPORTED) {
-//                        Log.e("TTS", "Language not supported");
-//                    } else {
-//                        mButtonSpeak.setEnabled(true);
-//                    }
-//                } else {
-//                    Log.e("TTS", "Initialization failed");
-//                }
-//            }
-//        });
-//
-//        mEditText = findViewById(R.id.edit_text);
-//        val inputText = outlinedTextField.editText?.text.toString()
-//        text = command_one_voice.editText?.text.toString()
-//        mButtonSpeak.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                mTTS.speak(, TextToSpeech.QUEUE_FLUSH, null);
-//            }
-//        });
-
     }
 
     public void TwoShowPopup(View v) {
@@ -98,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
                 myDialog.dismiss();
             }
         });
+        two_voice = (TextInputLayout) myDialog.findViewById(R.id.command_two_voice);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
@@ -113,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
                 myDialog.dismiss();
             }
         });
+        three_voice = (TextInputLayout) myDialog.findViewById(R.id.command_three_voice);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
@@ -128,15 +136,16 @@ public class MainActivity extends AppCompatActivity {
                 myDialog.dismiss();
             }
         });
+        four_voice = (TextInputLayout) myDialog.findViewById(R.id.command_four_voice);
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
 
     @Override
     protected void onDestroy() {
-        if (mTTS != null) {
-            mTTS.stop();
-            mTTS.shutdown();
+        if (text_to_speech != null) {
+            text_to_speech.stop();
+            text_to_speech.shutdown();
         }
         super.onDestroy();
     }

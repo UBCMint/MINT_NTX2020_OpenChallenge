@@ -96,6 +96,7 @@
             android:layout_gravity="end">
             <com.google.android.material.button.MaterialButton
                 android:id="@+id/three_play_button"
+                android:onClick="SpeakThree"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginEnd="8dp"
