@@ -1,77 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-android:orientation="vertical"
-android:layout_width="300dp"
-android:layout_height="300dp"
-android:background="@drawable/bg_royalblue"
-android:padding="5dp"
-android:layout_gravity="center">
-
-    <TextView
-        android:id="@+id/text_close"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:textStyle="bold"
-        android:layout_gravity="end"
-        android:gravity="center"
-        android:background="@drawable/ic_clear_black_24dp"/>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/command_four_title"
-        android:layout_marginTop="35dp"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="Type in title for this command"
-        android:background="#809aeb"
-        android:textColor="#ffffff">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/command_four_voice"
-        android:layout_marginTop="10dp"
-        android:layout_width="250dp"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:hint="Type in voice command"
-        android:background="#809aeb"
-        android:textColor="#ffffff">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:textColor="#ffffff"/>
-
-    </com.google.android.material.textfield.TextInputLayout>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="300dp"
+    android:layout_height="wrap_content"
+    android:id="@+id/card"
+    android:layout_margin="8dp"
+    android:orientation="vertical"
+    android:padding="5dp"
+    android:layout_gravity="center">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="2"
-        android:orientation="horizontal">
+        android:orientation="vertical">
 
-    <Button
-        android:id="@+id/four_play_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:layout_marginLeft="45dp"
-        android:layout_marginRight="20dp"
-        android:text="Play" />
 
-    <Button
-        android:id="@+id/four_save_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="Save" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+
+            <TextView
+                android:id="@+id/text_close"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:textStyle="bold"
+                android:layout_gravity="end"
+                android:gravity="center"
+                android:layout_marginBottom="-18dp"
+                android:background="@drawable/ic_clear_black_24dp"/>
+
+            <!-- Title, secondary and supporting text -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/command_one_title"
+                android:textAppearance="?attr/textAppearanceHeadline6"
+                />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/command_explanation"
+                android:textAppearance="?attr/textAppearanceBody2"
+                android:textColor="?android:attr/textColorSecondary"
+                />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="vertical"
+            android:layout_gravity="center">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/command_four_title"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="@string/title">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/command_four_voice"
+                android:layout_marginTop="10dp"
+                android:layout_marginBottom="10dp"
+                android:layout_width="250dp"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:hint="@string/text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+        </LinearLayout>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="8dp"
+            android:orientation="horizontal"
+            android:gravity="right"
+            android:layout_gravity="end">
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/four_play_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:layout_marginRight="8dp"
+                android:text="@string/play"
+                style="?attr/borderlessButtonStyle"
+                />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/four_save_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/save"
+                style="?attr/borderlessButtonStyle"
+                />
+        </LinearLayout>
 
     </LinearLayout>
 
-</LinearLayout>
+</com.google.android.material.card.MaterialCardView>

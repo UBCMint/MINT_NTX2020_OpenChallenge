@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--    Titles    -->
+    <string name="command_one_title">Command 1</string>
+    <string name="command_two_title">Command 2</string>
+    <string name="command_three_title">Command 3</string>
+    <string name="command_four_title">Command 4</string>
+
+    <!--    Explanation    -->
+    <string name="command_explanation">Type a text you wish the phone to say and title the command</string>
+
+    <!--    Play and Save   -->
+    <string name="play">Play</string>
+    <string name="save">Save</string>
+
+    <!--    Title and Text   -->
+    <string name="title">Title</string>
+    <string name="text">Text</string>
+
+</resources>
