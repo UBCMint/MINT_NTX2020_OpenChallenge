@@ -35,7 +35,7 @@ android:layout_gravity="center">
 
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/command_one_voice"
-        android:layout_marginTop="10dp"
+        android:layout_marginTop="35dp"
         android:layout_width="250dp"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -63,7 +63,8 @@ android:layout_gravity="center">
         android:layout_gravity="center"
         android:layout_marginLeft="45dp"
         android:layout_marginRight="20dp"
-        android:text="Play" />
+        android:text="Play"
+        android:/>
 
     <Button
         android:id="@+id/one_save_button"

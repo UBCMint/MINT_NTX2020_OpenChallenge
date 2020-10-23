@@ -3,7 +3,7 @@
 android:orientation="vertical"
 android:layout_width="300dp"
 android:layout_height="300dp"
-android:background="@drawable/bg_skyblue"
+android:background="@drawable/bg_royalblue"
 android:padding="5dp"
 android:layout_gravity="center">
 
@@ -23,7 +23,7 @@ android:layout_gravity="center">
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="Type in title for this command"
-        android:background="#dbf0fd"
+        android:background="#809aeb"
         android:textColor="#ffffff">
 
         <com.google.android.material.textfield.TextInputEditText
@@ -40,7 +40,7 @@ android:layout_gravity="center">
         android:layout_height="wrap_content"
         android:layout_gravity="center"
         android:hint="Type in voice command"
-        android:background="#dbf0fd"
+        android:background="#809aeb"
         android:textColor="#ffffff">
 
         <com.google.android.material.textfield.TextInputEditText
