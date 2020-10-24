@@ -27,6 +27,10 @@ public class MainActivity extends AppCompatActivity {
     private TextInputLayout two_voice;
     private TextInputLayout three_voice;
     private TextInputLayout four_voice;
+    private Button one_title;
+    private Button two_title;
+    private Button three_title;
+    private Button four_title;
 
 
     Dialog myDialog;
@@ -38,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         two_voice = (TextInputLayout) findViewById(R.id.command_two_voice);
         three_voice = (TextInputLayout) findViewById(R.id.command_three_voice);
         four_voice = (TextInputLayout) findViewById(R.id.command_four_voice);
+        one_title  = (Button) findViewById(R.id.command_one);
 
         myDialog = new Dialog(this);
 
@@ -49,6 +54,12 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public void goToBluetoothPage(View v) {
+        Intent myIntent = new Intent(MainActivity.this, add_page.class);
+//        myIntent.putExtra("key", value); //Optional parameters
+        MainActivity.this.startActivity(myIntent);
     }
 
     public void SpeakOne(View v) {
@@ -71,12 +82,6 @@ public class MainActivity extends AppCompatActivity {
         text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
     }
 
-    public void goToBluetoothPage(View v) {
-        Intent myIntent = new Intent(MainActivity.this, add_page.class);
-//        myIntent.putExtra("key", value); //Optional parameters
-        MainActivity.this.startActivity(myIntent);
-    }
-
     public void OneShowPopup(View v) {
         TextView text_close;
         Button btnFollow = (Button) myDialog.findViewById(R.id.one_save_button);
@@ -89,6 +94,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         one_voice = (TextInputLayout) myDialog.findViewById(R.id.command_one_voice);
+        Button save = (Button) myDialog.findViewById(R.id.one_save_button);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextInputLayout voiceText = (TextInputLayout) myDialog.findViewById(R.id.command_one_title);
+                String text =  voiceText.getEditText().getText().toString();
+
+                // button title
+                one_title = findViewById(R.id.command_one);
+                one_title.setText(text);
+
+                // popup title
+                TextView one_popup = myDialog.findViewById(R.id.one_popup_title);
+                one_popup.setText(text);
+
+                myDialog.dismiss();
+            }
+        });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
@@ -105,6 +128,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         two_voice = (TextInputLayout) myDialog.findViewById(R.id.command_two_voice);
+        Button save = (Button) myDialog.findViewById(R.id.two_save_button);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextInputLayout voiceText = (TextInputLayout) myDialog.findViewById(R.id.command_two_title);
+                String text =  voiceText.getEditText().getText().toString();
+
+                // button title
+                two_title = myDialog.findViewById(R.id.command_two);
+                two_title.setText(text);
+
+                // popup title
+                TextView two_popup = findViewById(R.id.two_popup_title);
+                two_popup.setText(text);
+
+                myDialog.dismiss();
+            }
+        });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
@@ -121,6 +162,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         three_voice = (TextInputLayout) myDialog.findViewById(R.id.command_three_voice);
+        Button save = (Button) myDialog.findViewById(R.id.three_save_button);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextInputLayout voiceText = (TextInputLayout) myDialog.findViewById(R.id.command_three_title);
+                String text =  voiceText.getEditText().getText().toString();
+
+                // button title
+                three_title = myDialog.findViewById(R.id.command_three);
+                three_title.setText(text);
+
+                // popup title
+                TextView three_popup = findViewById(R.id.three_popup_title);
+                three_popup.setText(text);
+
+                myDialog.dismiss();
+            }
+        });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
@@ -137,6 +196,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
         four_voice = (TextInputLayout) myDialog.findViewById(R.id.command_four_voice);
+        Button save = (Button) myDialog.findViewById(R.id.four_save_button);
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                TextInputLayout voiceText = (TextInputLayout) myDialog.findViewById(R.id.command_four_title);
+                String text =  voiceText.getEditText().getText().toString();
+
+                // button title
+                four_title = myDialog.findViewById(R.id.command_four);
+                four_title.setText(text);
+
+                // popup title
+                TextView four_popup = findViewById(R.id.four_popup_title);
+                four_popup.setText(text);
+
+                myDialog.dismiss();
+            }
+        });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
     }
