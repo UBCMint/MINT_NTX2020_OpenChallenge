@@ -31,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private Button two_title;
     private Button three_title;
     private Button four_title;
+    private ImageView goto_bluetooth_button;
 
 
     Dialog myDialog;
@@ -54,12 +55,19 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         });
+
+        goto_bluetooth_button = (ImageView) findViewById(R.id.bluetooth);
+        goto_bluetooth_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenBluetooth();
+            }
+        });
     }
 
-    public void goToBluetoothPage(View v) {
-        Intent myIntent = new Intent(MainActivity.this, add_page.class);
-//        myIntent.putExtra("key", value); //Optional parameters
-        MainActivity.this.startActivity(myIntent);
+    public void OpenBluetooth() {
+        Intent intent = new Intent(this, bluetooth.class);
+        startActivity(intent);
     }
 
     public void SpeakOne(View v) {
