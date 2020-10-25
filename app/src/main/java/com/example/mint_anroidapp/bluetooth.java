@@ -15,6 +15,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -31,6 +32,7 @@ public class bluetooth extends AppCompatActivity {
     private Set<BluetoothDevice> pairedDevices;
     private ListView myListView;
     private ArrayAdapter<String> BTArrayAdapter;
+    private ImageView goBackView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -43,6 +45,7 @@ public class bluetooth extends AppCompatActivity {
         listBtn = (Button)findViewById(R.id.paired);
         findBtn = (Button)findViewById(R.id.search);
         myListView = (ListView)findViewById(R.id.listView1);
+        goBackView = (ImageView)findViewById(R.id.go_back);
 
 
         // take an instance of BluetoothAdapter - Bluetooth radio
@@ -54,6 +57,13 @@ public class bluetooth extends AppCompatActivity {
             listBtn.setEnabled(false);
             findBtn.setEnabled(false);
             text.setText("Status: not supported");
+
+            goBackView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    GoBack();
+                }
+            });
 
             Toast.makeText(getApplicationContext(),"Your device does not support Bluetooth",
                     Toast.LENGTH_LONG).show();
@@ -94,6 +104,11 @@ public class bluetooth extends AppCompatActivity {
             BTArrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1);
             myListView.setAdapter(BTArrayAdapter);
         }
+    }
+
+    public void GoBack() {
+        Intent intent = new Intent(this, MainActivity.class);
+        startActivity(intent);
     }
 
     public void on(View view){
