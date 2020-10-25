@@ -112,7 +112,6 @@ public class bluetooth extends AppCompatActivity {
 
     @Override
     protected void onActivityResult (int requestCode, int resultCode, Intent data) {
-        // TODO Auto-generated method stub
         if(requestCode == REQUEST_ENABLE_BT){
             if(myBluetoothAdapter.isEnabled()) {
                 text.setText("Status: Enabled");
@@ -172,7 +171,6 @@ public class bluetooth extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
-        // TODO Auto-generated method stub
         super.onDestroy();
         unregisterReceiver(bReceiver);
     }
