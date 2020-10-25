@@ -45,7 +45,7 @@ public class bluetooth extends AppCompatActivity {
         listBtn = (Button)findViewById(R.id.paired);
         findBtn = (Button)findViewById(R.id.search);
         myListView = (ListView)findViewById(R.id.listView1);
-        goBackView = (ImageView)findViewById(R.id.go_back);
+        goBackView = (ImageView)findViewById(R.id.go_back_from_bluetooth);
 
 
         // take an instance of BluetoothAdapter - Bluetooth radio

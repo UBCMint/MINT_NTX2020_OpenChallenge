@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     private Button three_title;
     private Button four_title;
     private ImageView goto_bluetooth_button;
+    private ImageView goto_settings_button;
 
 
     Dialog myDialog;
@@ -63,6 +64,19 @@ public class MainActivity extends AppCompatActivity {
                 OpenBluetooth();
             }
         });
+
+        goto_settings_button =  (ImageView) findViewById(R.id.settings);
+        goto_settings_button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OpenSettings();
+            }
+        });
+    }
+
+    public void OpenSettings() {
+        Intent intent = new Intent(this, settings.class);
+        startActivity(intent);
     }
 
     public void OpenBluetooth() {

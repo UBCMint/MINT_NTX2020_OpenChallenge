@@ -21,12 +21,17 @@
     <string name="text">Text</string>
 
     <!--    Bluetooth    -->
-    <string name="action_settings">Settings</string>
     <string name="Text">Status: -</string>
     <string name="on">Turn On</string>
     <string name="off">Turn Off</string>
     <string name="List">List paired Devices</string>
     <string name="Find">Search Devices / Cancel</string>
     <string name="Bluetooth">Bluetooth</string>
+
+    <!--    Settings    -->
+    <string name="settings">Settings</string>
+    <string name="name">Name</string>
+
+
 
 </resources>
