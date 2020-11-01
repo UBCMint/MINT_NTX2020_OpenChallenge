@@ -32,6 +32,12 @@
     <string name="settings">Settings</string>
     <string name="name">Name</string>
 
-
+    <!--    Automation Commands-->
+    <string-array name="commands">
+        <item>Turn on lights</item>
+        <item>Turn off lights</item>
+        <item>Tell joke</item>
+        <item>Ask weather</item>
+    </string-array>
 
 </resources>

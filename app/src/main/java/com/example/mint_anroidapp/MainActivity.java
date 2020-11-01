@@ -7,16 +7,28 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.StrictMode;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.google.android.material.textfield.TextInputLayout;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.Locale;
 
@@ -72,6 +84,7 @@ public class MainActivity extends AppCompatActivity {
                 OpenSettings();
             }
         });
+
     }
 
     public void OpenSettings() {
@@ -87,21 +100,25 @@ public class MainActivity extends AppCompatActivity {
     public void SpeakOne(View v) {
         String to_speak = one_voice.getEditText().getText().toString();
         text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+        invokeAutomationCommand(to_speak);
     }
 
     public void SpeakTwo(View v) {
         String to_speak = two_voice.getEditText().getText().toString();
         text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+        invokeAutomationCommand(to_speak);
     }
 
     public void SpeakThree(View v) {
         String to_speak = three_voice.getEditText().getText().toString();
         text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+        invokeAutomationCommand(to_speak);
     }
 
     public void SpeakFour(View v) {
         String to_speak = four_voice.getEditText().getText().toString();
         text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+        invokeAutomationCommand(to_speak);
     }
 
     public void OneShowPopup(View v) {
@@ -238,6 +255,40 @@ public class MainActivity extends AppCompatActivity {
         });
         myDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         myDialog.show();
+    }
+
+    private void invokeAutomationCommand(String command) {
+        RequestQueue requestQueue = Volley.newRequestQueue(this);
+        String url = "http://192.168.0.12:3000/assistant";
+
+        String user = "Victor"; // TODO: modify this when we want multiple/different users
+        JSONObject data = new JSONObject();
+
+        Log.d("AutomationCommand", "SENDING  " + url);
+
+        try {
+            data.put("command", command);
+            data.put("converse", true);
+            data.put("user", user);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, data,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        // TODO: Check for success on response
+                        Log.d("AutomationCommand", response.toString());
+                    }
+                }, new Response.ErrorListener() {
+                        @Override
+                        public void onErrorResponse(VolleyError error) {
+                            error.printStackTrace();
+                        }
+                });
+
+        requestQueue.add(jsonObjectRequest);
     }
 
     @Override
