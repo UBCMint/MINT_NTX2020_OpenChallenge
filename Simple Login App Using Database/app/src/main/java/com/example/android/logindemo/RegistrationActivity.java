@@ -97,7 +97,7 @@ public class RegistrationActivity extends AppCompatActivity{
                                 //sendEmailVerification();
                                 sendUserData();
                                 firebaseAuth.signOut();
-                                Toast.makeText(RegistrationActivity.this, "Successfully Registered, Upload complete!", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(RegistrationActivity.this, "Successfully registered, upload complete", Toast.LENGTH_SHORT).show();
                                 finish();
                                 startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                             }else{
@@ -139,7 +139,7 @@ public class RegistrationActivity extends AppCompatActivity{
 
 
         if(name.isEmpty() || password.isEmpty() || email.isEmpty() || age.isEmpty() || imagePath == null){
-            Toast.makeText(this, "Please enter all the details", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter all details", Toast.LENGTH_SHORT).show();
         }else{
             result = true;
         }
@@ -156,12 +156,12 @@ public class RegistrationActivity extends AppCompatActivity{
                 public void onComplete(@NonNull Task<Void> task) {
                    if(task.isSuccessful()){
                        sendUserData();
-                       Toast.makeText(RegistrationActivity.this, "Successfully Registered, Verification mail sent!", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(RegistrationActivity.this, "Successfully registered, verification mail sent", Toast.LENGTH_SHORT).show();
                        firebaseAuth.signOut();
                        finish();
                        startActivity(new Intent(RegistrationActivity.this, MainActivity.class));
                    }else{
-                       Toast.makeText(RegistrationActivity.this, "Verification mail has'nt been sent!", Toast.LENGTH_SHORT).show();
+                       Toast.makeText(RegistrationActivity.this, "Verification mail has not been sent", Toast.LENGTH_SHORT).show();
                    }
                 }
             });
@@ -176,12 +176,12 @@ public class RegistrationActivity extends AppCompatActivity{
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
-                Toast.makeText(RegistrationActivity.this, "Upload failed!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegistrationActivity.this, "Upload failed", Toast.LENGTH_SHORT).show();
             }
         }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                Toast.makeText(RegistrationActivity.this, "Upload successful!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(RegistrationActivity.this, "Upload successful", Toast.LENGTH_SHORT).show();
             }
         });
         UserProfile userProfile = new UserProfile(age, email, name);

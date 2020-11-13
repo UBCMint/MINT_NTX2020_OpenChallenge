@@ -79,8 +79,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void validate(String userName, String userPassword) {
 
-        progressDialog.setMessage("You can subscribe to my channel until you are verified!");
-        progressDialog.show();
 
         firebaseAuth.signInWithEmailAndPassword(userName, userPassword).addOnCompleteListener(new OnCompleteListener<AuthResult>() {
             @Override
@@ -110,13 +108,6 @@ public class MainActivity extends AppCompatActivity {
 
         startActivity(new Intent(MainActivity.this, SecondActivity.class));
 
-//        if(emailflag){
-//            finish();
-//            startActivity(new Intent(MainActivity.this, SecondActivity.class));
-//        }else{
-//            Toast.makeText(this, "Verify your email", Toast.LENGTH_SHORT).show();
-//            firebaseAuth.signOut();
-//        }
     }
 
 }
