@@ -1,88 +1,134 @@
 import glob
 from torch.utils import data
-#import torchvision.transforms as transforms
 import numpy as np
-import random
-import os, os.path
 import torch
 from myargs import args
+from torchvision.transforms import Normalize
+from itertools import chain
+import tsaug
+import random
+from scipy.signal import butter, lfilter
 
-# findFile is actually unecessary at the moment
-def findFile(root_dir, endswith):
-    all_files = []
-    for path, subdirs, files in os.walk(root_dir):
-        for file in files:
-            if file.endswith(endswith):
-                all_files.append(os.path.join(path, file))
 
-    return all_files
+data_mean = (0.5, )
+data_std = (0.35,)
 
 
 class Dataset(data.Dataset):
     'Characterizes a dataset for PyTorch'
-    def __init__(self, impath, eval):
+    def __init__(self, impath, eval, pretraining):
         'Initialization'
 
         self.eval = eval
+        self.pretraining = pretraining
+        self.augmenter = (
+            # tsaug.TimeWarp() @ 0.5
+            # tsaug.Drift(max_drift=(0.01, 0.1)) @ 0.5
+            tsaug.Dropout(
+                p=0.05,
+                fill=0,
+                size=[5, 10, 20]
+            ) @ 0.5
+        )
+
+        # add to std if you would like some noise to be added to the spectrogram image
         self.std = 0
 
         # add images in different folders to the datalist
-        #datalist = []
-        #self.trainfiles = glob.glob('{}/*'.format(impath))
-        #self.length = 0 
-        self.number_files = len(os.listdir('data/train/trainfiles')) 
-        #get number of files and therefore events
-        
-        self.labelfile = np.load('data/train/gt.npy',allow_pickle=True)
+        datalist = []
+        filepaths = glob.glob('{}/*'.format(impath))
 
-        #for imfolder in trainfiles:
-            # open the gt.npy file in the folder and build a datalist
-            #print('placeholder')
-        #self.datalist = [item for sublist in datalist for item in sublist]
+        # open the gt.npy file in the folder and build a datalist
+        if not pretraining:
+            label_dict = np.load('./gt.npy', allow_pickle=True).flatten()[0]
+        else:
+            label_dict = np.load('./pretrain_gt.npy', allow_pickle=True).flatten()[0]
 
-        #if not self.eval:
-         #   from itertools import chain
-         #   self.datalist = list(chain(*[[i] * 1 for i in self.datalist]))
+        for path in filepaths:
+            datalist.append({
+                'image': path,
+                'label': label_dict[path.split('\\')[-1]]
+            })
+
+        self.datalist = datalist
+
+        if not self.eval:
+            self.datalist = list(chain(*[[i] * 10 for i in self.datalist]))
 
     def __len__(self):
         'Denotes the total number of samples'
-        return self.number_files
+        return len(self.datalist)
 
     def __getitem__(self, index):
         'Generates one sample of data'
+        image = np.load(self.datalist[index]['image'])
 
-        data = np.load('data/train/trainfiles/{}.npy'.format(index),allow_pickle=True)
-        label = self.labelfile.item()['{}.npy'.format(index)]
-        #labelarray = np.zeros(args.classes)
-        #labelarray[label]=1
+        # pretrined in millivolts, convert from micro to millivolts
+        if not self.pretraining:
+            image = image / 1000
 
-        return data, label
+        label = self.datalist[index]['label']
+
+        image = normalizepatch(image, self.eval, self.std, self.augmenter)
+
+        return image, label
 
 
-def GenerateIterator(args, impath, eval=False, shuffle=True):
+def GenerateIterator(args, impath, eval=False, shuffle=True, pretraining=False):
     params = {
         'batch_size': args.batch_size,
         'shuffle': shuffle,
-        #'num_workers': args.workers,
+        'num_workers': args.workers,
         'pin_memory': False,
         'drop_last': False,
     }
 
-    return data.DataLoader(Dataset(impath, eval=eval), **params)
+    return data.DataLoader(Dataset(impath, eval=eval, pretraining=pretraining), **params)
 
 
-def normalizepatch(p, gt, eval, std):
+def butter_bandpass(lowcut, highcut, fs=250, order=5):
+    nyq = 0.5 * fs
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band', output='ba')
+    return b, a
 
-    if not eval:
-        rot_num = random.choice([0, 1, 2, 3])
-        p = np.rot90(p, rot_num)
-        gt = np.rot90(gt, rot_num)
 
-        noise = np.random.normal(
-            0, std, args.imageDims)
-        p += noise
+def butter_bandpass_filter(data, lowcut, highcut, order=5):
+    b, a = butter_bandpass(lowcut, highcut, order=order)
+    y = lfilter(b, a, data)
+    return y
+
+
+def normalizepatch(p, eval, std, augmenter):
+
+    # filter here
+    for i in range(args.patch_classes):
+        p[i] = butter_bandpass_filter(p[i], 8, 30, order=1)
+
+    # put p between 0 and 1
+    # p = p - p.min()
+    # p = p / p.max()
+
+    # we can consider adding this back in
+    # if not eval:
+
+        # with 50% chance to do noise addition
+        # if random.random() > -1:
+        #     noise = np.random.normal(0, std, (args.patch_classes, args.seq_length))
+        #     p += noise
+
+        # 50% for each of the separate augmenations in augmenter
+        # for i in range(args.patch_classes):
+        #     p[i, :] = augmenter.augment(p[i, :])
 
     p = np.ascontiguousarray(p)
-    gt = np.ascontiguousarray(gt)
+    p = torch.from_numpy(p).unsqueeze(0).float()
+
+    # consider normalizing here!
+    # p = Normalize(data_mean, data_std)(p)
+
+    # output shape is (1, channels, sequence) typically (1, 8, 500)
+    return p
 
 
