@@ -1,0 +1,23 @@
+clip_num(0:leftarm, 1:leftleg, 2:rightarm, 3:rightleg) | time_in_video | length_of_clip
+experiment conducted by: nov-17_c5_han
+-----Note: final blink is at 13 seconds-----
+2 20 4
+0 27 5
+0 35 3
+1 45 4
+1 55 4
+2 65 6
+1 77 4
+0 84 5
+1 95 3
+0 101 4
+1 111 6
+0 122 4
+1 131 5
+2 141 5
+3 150 3
+2 156 4
+1 165 5
+3 177 3
+3 185 3
+3 191 7
