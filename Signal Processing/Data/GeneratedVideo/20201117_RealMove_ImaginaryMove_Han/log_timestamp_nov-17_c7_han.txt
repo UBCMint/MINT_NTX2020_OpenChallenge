@@ -1,0 +1,3 @@
+The time video started for trial 1: 2020-11-17 18:28:09.344742
+The time video started for trial 2: 2020-11-17 19:23:21.020994
+The time video started for trial 3: 2020-11-17 20:44:29.628093
