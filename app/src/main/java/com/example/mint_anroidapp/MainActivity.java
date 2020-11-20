@@ -1,5 +1,6 @@
 package com.example.mint_anroidapp;
 
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Dialog;
@@ -9,6 +10,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
+import android.os.Build;
 import android.os.Bundle;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
@@ -27,14 +29,18 @@ import com.google.android.material.textfield.TextInputLayout;
 
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.pytorch.IValue;
 import org.pytorch.Module;
 import org.pytorch.Tensor;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.nio.file.Paths;
 import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
@@ -53,6 +59,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     Dialog myDialog;
+    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -93,52 +100,67 @@ public class MainActivity extends AppCompatActivity {
         // PyTorch
         Bitmap bitmap = null;
         Module module = null;
+        Tensor inputTensor = null;
+        long[] shape = new long[]{1,1,8,500};
 
         try {
-            // creating bitmap from packaged into app android asset 'image.jpg',
-            // app/src/main/assets/image.jpg
-            bitmap = BitmapFactory.decodeStream(getAssets().open("wolf.jpg"));
-            // loading serialized torchscript module from packaged into app android asset model.pt,
-            // app/src/model/assets/model.pt
-//            module = Module.load(assetFilePath(this, "ResNetModel.pt"));
             module = Module.load(assetFilePath(this, "xxx_model.pt"));
-
         } catch (IOException e) {
             Log.e("PyTorch", "Error reading assets", e);
             finish();
         }
 
-//        final Tensor inputTensor = Tensor
-//
-//        // showing image on UI
-//        ImageView imageView = findViewById(R.id.image);
-//        imageView.setImageBitmap(bitmap);
-//
-//        // preparing input tensor
-//        final Tensor inputTensor = TensorImageUtils.bitmapToFloat32Tensor(bitmap,
-//                TensorImageUtils.TORCHVISION_NORM_MEAN_RGB, TensorImageUtils.TORCHVISION_NORM_STD_RGB);
-//
-//        // running the model
-//        final Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
+        // preparing tensor
+        try {
+            InputStreamReader is = new InputStreamReader(getAssets()
+                    .open("0.csv"));
+
+            float[] inputDataArr = new float[8*500];
+            int ptr = 0;
+
+            BufferedReader reader = new BufferedReader(is);
+            reader.readLine();
+            String line;
+            while ((line = reader.readLine()) != null) {
+                String[] lineStrArr = line.split(",");
+                assert (lineStrArr.length == 500);
+                for (int i = 0; i < 500; i++) {
+                    inputDataArr[ptr] = Float.parseFloat(lineStrArr[i]);
+                    ptr++;
+                }
+            }
+            inputTensor = Tensor.fromBlob(inputDataArr, shape);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        // running the model
+        long startTime = System.nanoTime();
+        final Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
 //
 //        // getting tensor content as java array of floats
-//        final float[] scores = outputTensor.getDataAsFloatArray();
-//
+        final float[] scores = outputTensor.getDataAsFloatArray();
+        long endTime = System.nanoTime();
+        long inferenceDuration = (endTime - startTime)/1000000; // milliseconds
+        Log.d("MainActivity", "inferenceDuration: " + inferenceDuration);
+
 //        // searching for the index with maximum score
-//        float maxScore = -Float.MAX_VALUE;
-//        int maxScoreIdx = -1;
-//        for (int i = 0; i < scores.length; i++) {
-//            if (scores[i] > maxScore) {
-//                maxScore = scores[i];
-//                maxScoreIdx = i;
-//            }
-//        }
-//
+        float maxScore = -Float.MAX_VALUE;
+        int maxScoreIdx = -1;
+        for (int i = 0; i < scores.length; i++) {
+            Log.d("MainActivity", "Output score at index " + i + ": " +  scores[i]);
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                maxScoreIdx = i;
+            }
+        }
+
 //        String className = ImageNetClasses.IMAGENET_CLASSES[maxScoreIdx];
 //
 //        // showing className on UI
-//        TextView textView = findViewById(R.id.outputText);
-//        textView.setText(className);
+        TextView textView = findViewById(R.id.inferenceTimeText);
+        textView.setText(String.valueOf(inferenceDuration));
     }
 
     public void OpenSettings() {
