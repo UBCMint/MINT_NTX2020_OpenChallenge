@@ -164,7 +164,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void OpenSettings() {
-        Intent intent = new Intent(this, settings.class);
+        Intent intent = new Intent(this, Login.class);
         startActivity(intent);
     }
 
