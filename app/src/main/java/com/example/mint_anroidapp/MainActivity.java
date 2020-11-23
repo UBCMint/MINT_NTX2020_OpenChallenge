@@ -6,16 +6,20 @@ import androidx.appcompat.app.AppCompatActivity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.preference.PreferenceManager;
 import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -41,7 +45,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.Locale;
+
+import brainflow.AggOperations;
+import brainflow.BoardIds;
+import brainflow.BoardShim;
+import brainflow.BrainFlowError;
+import brainflow.BrainFlowInputParams;
+import brainflow.DataFilter;
+import brainflow.FilterTypes;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -57,9 +70,21 @@ public class MainActivity extends AppCompatActivity {
     private ImageView goto_bluetooth_button;
     private ImageView goto_settings_button;
 
+    private Module module; // PyTorch model
+
+    // BrainFlow
+    public static BoardShim boardShim = null;
+    public static int samplingRate = 0;
+    public static int[] channels = null;
+    String address = "MY_IP_ADDRESS"; // TODO: set this
+    String port = "MY_PORT"; // TODO: set this
+    private int windowSize = 2;
+    private int timeSleep = 1; // 20fps
+    private Runnable worker = null;
+    private final Handler handler = new Handler();
+    private static int downnsamplingOrder = 1;
 
     Dialog myDialog;
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -101,12 +126,10 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // PyTorch
-        Bitmap bitmap = null;
-        Module module = null;
-        Tensor inputTensor = null;
-        long[] shape = new long[]{1,1,8,500};
+//        Tensor inputTensor = null;
+//        long[] shape = new long[]{1,1,8,500};
 
+        // Initiate PyTorch model
         try {
             module = Module.load(assetFilePath(this, "xxx_model.pt"));
         } catch (IOException e) {
@@ -114,57 +137,7 @@ public class MainActivity extends AppCompatActivity {
             finish();
         }
 
-        // preparing tensor
-        try {
-            InputStreamReader is = new InputStreamReader(getAssets()
-                    .open("0.csv"));
-
-            float[] inputDataArr = new float[8*500];
-            int ptr = 0;
-
-            BufferedReader reader = new BufferedReader(is);
-            reader.readLine();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                String[] lineStrArr = line.split(",");
-                assert (lineStrArr.length == 500);
-                for (int i = 0; i < 500; i++) {
-                    inputDataArr[ptr] = Float.parseFloat(lineStrArr[i]);
-                    ptr++;
-                }
-            }
-            inputTensor = Tensor.fromBlob(inputDataArr, shape);
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        // running the model
-        long startTime = System.nanoTime();
-        final Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
-//
-//        // getting tensor content as java array of floats
-        final float[] scores = outputTensor.getDataAsFloatArray();
-        long endTime = System.nanoTime();
-        long inferenceDuration = (endTime - startTime)/1000000; // milliseconds
-        Log.d("MainActivity", "inferenceDuration: " + inferenceDuration);
-
-//        // searching for the index with maximum score
-        float maxScore = -Float.MAX_VALUE;
-        int maxScoreIdx = -1;
-        for (int i = 0; i < scores.length; i++) {
-            Log.d("MainActivity", "Output score at index " + i + ": " +  scores[i]);
-            if (scores[i] > maxScore) {
-                maxScore = scores[i];
-                maxScoreIdx = i;
-            }
-        }
-
-//        String className = ImageNetClasses.IMAGENET_CLASSES[maxScoreIdx];
-//
-//        // showing className on UI
-        TextView textView = findViewById(R.id.inferenceTimeText);
-        textView.setText(String.valueOf(inferenceDuration));
+        onResume();
     }
 
     public void OpenSettings() {
@@ -179,7 +152,8 @@ public class MainActivity extends AppCompatActivity {
 
     public void SpeakOne(View v) {
         String to_speak = one_voice.getEditText().getText().toString();
-        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH, null);
+        text_to_speech.speak(to_speak, TextToSpeech.QUEUE_FLUSH,
+                null);
         invokeAutomationCommand(to_speak);
     }
 
@@ -403,4 +377,164 @@ public class MainActivity extends AppCompatActivity {
             return file.getAbsolutePath();
         }
     }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    private int predict(double[][] data) {
+        Tensor inputTensor = null;
+        long[] shape = new long[]{1,1,8,500};
+
+        // preparing tensor
+        double[] inputDataArr = Arrays.stream(data) // flatten to 1D array
+                .flatMapToDouble(Arrays::stream)
+                .toArray();
+
+        inputTensor = Tensor.fromBlob(inputDataArr, shape);
+
+        // running the model
+        final Tensor outputTensor = module.forward(IValue.from(inputTensor)).toTensor();
+
+        // getting tensor content as java array of floats
+        final float[] scores = outputTensor.getDataAsFloatArray();
+
+        // searching for the index with maximum score
+        float maxScore = -Float.MAX_VALUE;
+        int maxScoreIdx = -1;
+        for (int i = 0; i < scores.length; i++) {
+//            Log.d("MainActivity", "Output score at index " + i + ": " +  scores[i]);
+            if (scores[i] > maxScore) {
+                maxScore = scores[i];
+                maxScoreIdx = i;
+            }
+        }
+
+        return maxScoreIdx;
+    }
+
+    private void handlePrediction(int maxScoreIdx) {
+        switch (maxScoreIdx) {
+            case 0:
+                Log.d("MainActivity", "handlePrediction: Passive");
+                break;
+            case 1:
+                Log.d("MainActivity", "handlePrediction: Left Arm");
+                SpeakOne(null);
+                break;
+            case 2:
+                Log.d("MainActivity", "handlePrediction: Left Leg");
+                SpeakThree(null);
+                break;
+            case 3:
+                Log.d("MainActivity", "handlePrediction: Right Arm");
+                SpeakTwo(null);
+                break;
+            case 4:
+                Log.d("MainActivity", "handlePrediction: Right Leg");
+                SpeakFour(null);
+                break;
+            default:
+                Log.d("MainActivity", "handlePrediction: DEFAULT (passive)");
+                break;
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        // read settings
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        int boardId = BoardIds.CYTON_WIFI_BOARD.get_code();
+
+        try {
+            BrainFlowInputParams params = new BrainFlowInputParams();
+            boolean done = false;
+            int count = Integer.parseInt(port);
+            params.ip_address = address;
+            params.ip_port = count;
+            boardShim = new BoardShim(boardId, params);
+            // prepare_session is relatively long operation, doing it in UI thread lead to black window for a few seconds
+            boardShim.prepare_session();
+            boardShim.start_stream();
+            samplingRate = BoardShim.get_sampling_rate(boardId);
+            channels = BoardShim.get_exg_channels(boardId);
+            while (true) {
+                run_a();
+            }
+        } catch (Exception e) {
+//            Log.e(getString(R.string.log_tag), e.getMessage());
+        }
+    }
+
+    @Override
+    protected void onPause() {
+        try {
+            if (boardShim != null) {
+                boardShim.release_session();
+            }
+        } catch (BrainFlowError e) {
+//            Log.e(getString(R.string.log_tag), e.getMessage());
+        }
+        super.onPause();
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.N)
+    public void run_a() throws IOException {
+
+        // don't plot too many datapoints
+        int desiredSamplingRate = 250;
+        if (MainActivity.samplingRate > desiredSamplingRate) {
+            downnsamplingOrder = MainActivity.samplingRate / desiredSamplingRate;
+        }
+
+        try {
+            double[][] tempArray = MainActivity.boardShim.get_current_board_data(MainActivity.samplingRate * windowSize);
+            double[][] tmpArray = new double[tempArray.length][MainActivity.samplingRate * windowSize];
+            double[][] dataArray = null;
+            // prepend with zeroes if less datapoints
+            if (tempArray[0].length != MainActivity.samplingRate * windowSize) {
+                for (int i = 0; i < tempArray.length; i++) {
+                    for (int j = 0; j < MainActivity.samplingRate * windowSize - tempArray[i].length; j++) {
+                        tmpArray[i][j] = 0.0;
+                    }
+                    for (int j = 0; j < tempArray[i].length; j++) {
+                        tmpArray[i][j + MainActivity.samplingRate * windowSize - tempArray[i].length] = tempArray[i][j];
+                    }
+                }
+            } else {
+                tmpArray = tempArray;
+            }
+            for (int i = 0; i < MainActivity.channels.length; i++) {
+                DataFilter.perform_bandstop(tmpArray[MainActivity.channels[i]], MainActivity.samplingRate, 50.0, 4.0, 4,
+                        FilterTypes.BUTTERWORTH.get_code(), 0.0);
+                DataFilter.perform_bandstop(tmpArray[MainActivity.channels[i]], MainActivity.samplingRate, 60.0, 4.0, 4,
+                        FilterTypes.BUTTERWORTH.get_code(), 0.0);
+                DataFilter.perform_bandpass(tmpArray[MainActivity.channels[i]], MainActivity.samplingRate, 19.0, 11.0, 4,
+                        FilterTypes.BUTTERWORTH.get_code(), 0.0);
+            }
+            // downsampling
+            if (downnsamplingOrder > 1) {
+                dataArray = new double[tmpArray.length][];
+                for (int i = 0; i < tmpArray.length; i++) {
+                    dataArray[i] = DataFilter.perform_downsampling(tmpArray[i], downnsamplingOrder, AggOperations.MEDIAN.get_code());
+                }
+            } else {
+                dataArray = tmpArray;
+            }
+            int num_rows = MainActivity.channels.length;
+            double[][] data = dataArray;
+
+            // Run model
+            int prediction = predict(data);
+            handlePrediction(prediction);
+
+//            for (int i = 0; i < num_rows; i++)
+//            {
+//                System.out.println (Arrays.toString (data[i]));
+//            }
+//            System.out.println(data[0].length + "x" + data.length);
+
+        } catch (BrainFlowError e) {
+//                   Log.e(getString(R.string.log_tag), e.getMessage());
+        }
+    }
+
 }

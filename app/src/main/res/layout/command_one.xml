@@ -96,15 +96,16 @@
                 android:orientation="horizontal"
                 android:gravity="right"
                 android:layout_gravity="end">
+
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/one_play_button"
-                    android:onClick="SpeakOne"
+                    style="?attr/borderlessButtonStyle"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginEnd="8dp"
                     android:layout_marginRight="8dp"
-                    android:text="@string/play"
-                    style="?attr/borderlessButtonStyle" />
+                    android:onClick="SpeakOne"
+                    android:text="@string/play" />
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/one_save_button"
                     android:layout_width="wrap_content"
