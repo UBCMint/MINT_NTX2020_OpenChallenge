@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
         three_voice = (TextInputLayout) findViewById(R.id.command_three_voice);
         four_voice = (TextInputLayout) findViewById(R.id.command_four_voice);
         one_title  = (Button) findViewById(R.id.command_one);
+        two_title  = (Button) findViewById(R.id.command_two);
+        three_title  = (Button) findViewById(R.id.command_three);
+        four_title  = (Button) findViewById(R.id.command_four);
+
 
         myDialog = new Dialog(this);
 
@@ -251,11 +255,11 @@ public class MainActivity extends AppCompatActivity {
                 String text =  voiceText.getEditText().getText().toString();
 
                 // button title
-                two_title = myDialog.findViewById(R.id.command_two);
+                two_title = findViewById(R.id.command_two);
                 two_title.setText(text);
 
                 // popup title
-                TextView two_popup = findViewById(R.id.two_popup_title);
+                TextView two_popup = myDialog.findViewById(R.id.two_popup_title);
                 two_popup.setText(text);
 
                 myDialog.dismiss();
@@ -285,11 +289,11 @@ public class MainActivity extends AppCompatActivity {
                 String text =  voiceText.getEditText().getText().toString();
 
                 // button title
-                three_title = myDialog.findViewById(R.id.command_three);
+                three_title = findViewById(R.id.command_three);
                 three_title.setText(text);
 
                 // popup title
-                TextView three_popup = findViewById(R.id.three_popup_title);
+                TextView three_popup = myDialog.findViewById(R.id.three_popup_title);
                 three_popup.setText(text);
 
                 myDialog.dismiss();
@@ -319,11 +323,11 @@ public class MainActivity extends AppCompatActivity {
                 String text =  voiceText.getEditText().getText().toString();
 
                 // button title
-                four_title = myDialog.findViewById(R.id.command_four);
+                four_title = findViewById(R.id.command_four);
                 four_title.setText(text);
 
                 // popup title
-                TextView four_popup = findViewById(R.id.four_popup_title);
+                TextView four_popup = myDialog.findViewById(R.id.four_popup_title);
                 four_popup.setText(text);
 
                 myDialog.dismiss();
